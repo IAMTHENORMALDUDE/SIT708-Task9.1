@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:padding="16dp"
+    tools:context=".ItemDetailActivity">
+
+    <TextView
+        android:id="@+id/textViewItemDetailName"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="20sp"
+        android:textStyle="bold"
+        android:layout_marginBottom="8dp"
+        tools:text="Found Apple AirPods" />
+
+    <TextView
+        android:id="@+id/textViewItemDetailDate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:layout_marginBottom="8dp"
+        tools:text="2 days ago" /> <!-- Example text -->
+
+    <TextView
+        android:id="@+id/textViewItemDetailLocation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:layout_marginBottom="16dp"
+        tools:text="At Burwood campus" /> <!-- Example text -->
+
+    <TextView
+        android:id="@+id/textViewItemDetailDescription"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:layout_marginBottom="16dp"
+        tools:text="Detailed description goes here..." /> <!-- Example text -->
+
+    <TextView
+        android:id="@+id/textViewItemDetailContact"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textSize="16sp"
+        android:layout_marginBottom="32dp"
+        tools:text="Contact: 0400 000 000" /> <!-- Example text -->
+
+    <Button
+        android:id="@+id/btnRemoveItem"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="REMOVE" />
+
+</LinearLayout>
