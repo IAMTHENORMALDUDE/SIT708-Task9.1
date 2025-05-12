@@ -1,6 +1,8 @@
 package com.example.lostandfound
 
 import android.Manifest
+import android.app.Activity
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
@@ -19,8 +21,6 @@ import com.google.android.gms.location.LocationServices
 import com.google.android.libraries.places.api.Places
 import com.google.android.libraries.places.api.model.Place
 import com.google.android.libraries.places.api.net.PlacesClient
-import com.google.android.libraries.places.widget.AutocompleteSupportFragment
-import com.google.android.libraries.places.widget.listener.PlaceSelectionListener
 
 class CreateAdvertActivity : AppCompatActivity() {
 
@@ -44,6 +44,7 @@ class CreateAdvertActivity : AppCompatActivity() {
     
     companion object {
         private const val LOCATION_PERMISSION_REQUEST_CODE = 1
+        private const val AUTOCOMPLETE_REQUEST_CODE = 2
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -74,9 +75,18 @@ class CreateAdvertActivity : AppCompatActivity() {
 
         // Set up location autocomplete when clicking on the location field
         editTextLocation.setOnClickListener {
-            // You can implement a custom autocomplete UI here or use the Places SDK Autocomplete widget
-            // For simplicity, we'll just show a toast message
-            Toast.makeText(this, "Enter a location or use Get Current Location", Toast.LENGTH_SHORT).show()
+            // Launch the Places Autocomplete activity
+            try {
+                // Initialize the Places SDK Autocomplete intent
+                val fields = listOf(Place.Field.ID, Place.Field.NAME, Place.Field.LAT_LNG, Place.Field.ADDRESS)
+                val intent = com.google.android.libraries.places.widget.Autocomplete.IntentBuilder(
+                    com.google.android.libraries.places.widget.model.AutocompleteActivityMode.OVERLAY,
+                    fields
+                ).build(this)
+                startActivityForResult(intent, AUTOCOMPLETE_REQUEST_CODE)
+            } catch (e: Exception) {
+                Toast.makeText(this, "Error launching autocomplete: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
         }
         
         btnGetCurrentLocation.setOnClickListener {
@@ -131,6 +141,40 @@ class CreateAdvertActivity : AppCompatActivity() {
                 getCurrentLocation()
             } else {
                 Toast.makeText(this, "Location permission denied", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+    
+    @Suppress("DEPRECATION")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode == AUTOCOMPLETE_REQUEST_CODE) {
+            when (resultCode) {
+                RESULT_OK -> {
+                    data?.let {
+                        val place = com.google.android.libraries.places.widget.Autocomplete.getPlaceFromIntent(it)
+                        // Set the location name in the EditText
+                        editTextLocation.setText(place.address ?: place.name)
+                        
+                        // Get the coordinates
+                        place.latLng?.let { latLng ->
+                            currentLatitude = latLng.latitude
+                            currentLongitude = latLng.longitude
+                            Toast.makeText(this, "Location selected: ${place.name}", Toast.LENGTH_SHORT).show()
+                        } ?: run {
+                            Toast.makeText(this, "No coordinates available for this location", Toast.LENGTH_SHORT).show()
+                        }
+                    }
+                }
+                com.google.android.libraries.places.widget.AutocompleteActivity.RESULT_ERROR -> {
+                    data?.let {
+                        val status = com.google.android.libraries.places.widget.Autocomplete.getStatusFromIntent(it)
+                        Toast.makeText(this, "Error: ${status.statusMessage}", Toast.LENGTH_SHORT).show()
+                    }
+                }
+                RESULT_CANCELED -> {
+                    // The user canceled the operation
+                }
             }
         }
     }
