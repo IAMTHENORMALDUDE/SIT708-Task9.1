@@ -12,6 +12,7 @@ class MainActivity : AppCompatActivity() {
 
     private lateinit var btnCreateAdvert: Button
     private lateinit var btnShowItems: Button
+    private lateinit var btnShowOnMap: Button
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,6 +28,7 @@ class MainActivity : AppCompatActivity() {
 
         btnCreateAdvert = findViewById(R.id.btnCreateAdvert)
         btnShowItems = findViewById(R.id.btnShowItems)
+        btnShowOnMap = findViewById(R.id.btnShowOnMap)
 
         btnCreateAdvert.setOnClickListener {
             val intent = Intent(this, CreateAdvertActivity::class.java)
@@ -35,6 +37,11 @@ class MainActivity : AppCompatActivity() {
 
         btnShowItems.setOnClickListener {
             val intent = Intent(this, ListItemsActivity::class.java)
+            startActivity(intent)
+        }
+        
+        btnShowOnMap.setOnClickListener {
+            val intent = Intent(this, MapActivity::class.java)
             startActivity(intent)
         }
     }

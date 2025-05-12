@@ -11,7 +11,7 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
 
     companion object {
         private const val DATABASE_NAME = "lostandfound.db"
-        private const val DATABASE_VERSION = 1
+        private const val DATABASE_VERSION = 2
 
         // Table name
         private const val TABLE_ITEMS = "items"
@@ -24,6 +24,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
         private const val COLUMN_DESCRIPTION = "description"
         private const val COLUMN_DATE = "date"
         private const val COLUMN_LOCATION = "location"
+        private const val COLUMN_LATITUDE = "latitude"
+        private const val COLUMN_LONGITUDE = "longitude"
     }
 
     override fun onCreate(db: SQLiteDatabase) {
@@ -35,7 +37,9 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 $COLUMN_PHONE TEXT NOT NULL,
                 $COLUMN_DESCRIPTION TEXT NOT NULL,
                 $COLUMN_DATE TEXT NOT NULL,
-                $COLUMN_LOCATION TEXT NOT NULL
+                $COLUMN_LOCATION TEXT NOT NULL,
+                $COLUMN_LATITUDE REAL DEFAULT 0.0,
+                $COLUMN_LONGITUDE REAL DEFAULT 0.0
             )
         """.trimIndent()
         
@@ -43,8 +47,14 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
     }
 
     override fun onUpgrade(db: SQLiteDatabase, oldVersion: Int, newVersion: Int) {
-        db.execSQL("DROP TABLE IF EXISTS $TABLE_ITEMS")
-        onCreate(db)
+        if (oldVersion < 2) {
+            // Add new columns for latitude and longitude
+            db.execSQL("ALTER TABLE $TABLE_ITEMS ADD COLUMN $COLUMN_LATITUDE REAL DEFAULT 0.0")
+            db.execSQL("ALTER TABLE $TABLE_ITEMS ADD COLUMN $COLUMN_LONGITUDE REAL DEFAULT 0.0")
+        } else {
+            db.execSQL("DROP TABLE IF EXISTS $TABLE_ITEMS")
+            onCreate(db)
+        }
     }
 
     // Insert a new item
@@ -57,6 +67,8 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
             put(COLUMN_DESCRIPTION, item.description)
             put(COLUMN_DATE, item.date)
             put(COLUMN_LOCATION, item.location)
+            put(COLUMN_LATITUDE, item.latitude)
+            put(COLUMN_LONGITUDE, item.longitude)
         }
         
         val id = db.insert(TABLE_ITEMS, null, values)
@@ -80,7 +92,9 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                     phone = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PHONE)),
                     description = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPTION)),
                     date = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE)),
-                    location = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LOCATION))
+                    location = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LOCATION)),
+                    latitude = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_LATITUDE)),
+                    longitude = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_LONGITUDE))
                 )
                 itemList.add(item)
             } while (cursor.moveToNext())
@@ -121,7 +135,9 @@ class DatabaseHelper(context: Context) : SQLiteOpenHelper(context, DATABASE_NAME
                 phone = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_PHONE)),
                 description = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DESCRIPTION)),
                 date = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_DATE)),
-                location = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LOCATION))
+                location = cursor.getString(cursor.getColumnIndexOrThrow(COLUMN_LOCATION)),
+                latitude = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_LATITUDE)),
+                longitude = cursor.getDouble(cursor.getColumnIndexOrThrow(COLUMN_LONGITUDE))
             )
         }
         

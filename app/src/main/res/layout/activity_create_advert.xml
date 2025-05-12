@@ -76,14 +76,20 @@
         android:inputType="date"
         android:layout_marginBottom="8dp" />
 
+
     <EditText
         android:id="@+id/editTextLocation"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:hint="Location"
-        android:inputType="text"
-        android:layout_marginBottom="16dp" />
+        android:inputType="text" />
 
+    <Button
+        android:id="@+id/btnGetCurrentLocation"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="GET CURRENT LOCATION" />
     <Button
         android:id="@+id/btnSave"
         android:layout_width="match_parent"
